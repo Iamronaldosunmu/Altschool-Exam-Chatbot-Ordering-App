@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+    :root {
+        --var-grey:#313740;
+    }
+    * {
+        padding: 0px;
+        margin: 0px;
+        font-family: 'Montserrat', sans-serif;
+        box-sizing: border-box;
+    }
+    body {
+        color: white;
+    }
+    
+    .main-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        background: -webkit-linear-gradient(to right top, rgb(229 124 227), rgb(161 83 244), rgb(87 42 188), rgb(40 19 87)); 
+        background: linear-gradient(to right top, rgb(229 124 227), rgb(161 83 244), rgb(87 42 188), rgb(40 19 87)); 
+    }
+    .chat-interface {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        max-width: 700px;
+        background-color: black;
+        height: 100%;
+        max-height: 600px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+    }
+    @media screen and (max-width: 1023px) {
+        .main-container {
+            display: block;
+            padding: 0px;
+        }
+        .chat-interface {
+            max-width: none;
+            max-height: none;
+            border-radius: 0px;
+        }
+    }
+    .chatbot-form {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
+    }
+
+    .input-group {
+        border: 0px;
+        width: 100%;
+        background-color: #313740;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 15px;
+    }
+    .input-group input {
+        background-color: transparent;
+        border: 0px;
+        padding: 15px;
+        width: 100%
+
+    }
+    .chatbot-form input:focus {
+        outline: none;
+        color: white;
+    }
+    .message {
+        width: fit-content;
+        /* background-color: lightskyblue; */
+        padding: 10px;
+        padding-left: 15px;
+        border-radius: 15px;
+        margin-bottom: 10px;
+        color: white;
+        max-width: 350px;
+        animation-name: showMessage;
+        animation-duration: 0.3s;
+    }
+    .message.chatbot {
+        height: fit-content;
+        background-color: #313740;
+        border-bottom-left-radius: 5px;
+    }
+    .message.user {
+        background: -webkit-linear-gradient(to right top, #fc4a1a, #f7b733); 
+        background: linear-gradient(to right top, #fc4a1a, #f7b733); 
+        border-bottom-right-radius: 5px;
+        align-self: flex-end;
+    }
+    .restaurantImage {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        object-fit: cover;
+    }
+    .top-section {
+        display: flex;
+        padding-left: 20px;
+        padding-top: 10px;
+        gap: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #313740;
+        width: 100%;
+        background-color: black;
+    }
+    .top-section .text {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 3px;
+    }
+    .text .restaurant-name {
+        font-weight: 600;
+    }
+    .text .online-status {
+        font-size: 14px;
+        color: #0088CC;
+    }
+    .sendButton {
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 110px;
+        height: 30px;
+        border: 0px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        gap: 5px;
+        font-weight: bold;
+        font-size: 16.5px;
+        color: var(
+            --var-grey
+        );
+    }
+    .sendButton:hover {
+        transform: scale(1.05);
+    }
+    .sendButton:active {
+        transform: scale(0.95);
+    }
+    .sendButton:focus {
+        outline: none;
+    }
+    .sendImage {
+        width: 20px;
+        height: 20px;
+    }
+    .message-container {
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: 100%;
+        overflow: auto;
+    }
+    .message-container::-webkit-scrollbar {
+  width: 8px;
+}
+    /* Track */
+    .message-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    /* Handle */
+    .message-container::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+    background: var(--var-grey);
+    }
+    .quick-options-container {
+        width: 100%;
+        overflow: auto;
+        padding: 0px;
+        margin: 0px;
+    }
+    .quick-options-container::-webkit-scrollbar {
+        display: none;
+    }
+    .quick-options {
+        display: flex;
+        min-width: 764px;
+        gap: 15px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+    .quick-options div {
+        font-weight: bold;
+        padding: 10px 15px;
+        border-radius: 25px;
+        transition: all 0.3s;
+        background: var(--var-grey);
+        cursor: pointer;
+    }
+    .quick-options div:active {
+        scale: 0.95;
+    }
+    /* .quick-options div:nth-of-type(1) {
+        background: -webkit-linear-gradient(to right, #8E2DE2, #4A00E0); 
+        background: linear-gradient(to right, #8E2DE2, #4A00E0); 
+    }
+    .quick-options div:nth-of-type(2) {
+        background: -webkit-linear-gradient(to right, #fe8c00, #f83600); 
+        background: linear-gradient(to right, #fe8c00, #f83600); 
+    }
+    .quick-options div:nth-of-type(3) {
+        background: -webkit-linear-gradient(to right, #ff00cc, #333399); 
+        background: linear-gradient(to right, #ff00cc, #333399); 
+    }
+    .quick-options div:nth-of-type(4) {
+        background: -webkit-linear-gradient(to right, #fc4a1a, #f7b733 ); 
+        background: linear-gradient(to right, #fc4a1a, #f7b733 ); 
+    }
+    .quick-options div:nth-of-type(5) {
+        background: -webkit-linear-gradient(to right, #200122 #6f0000); 
+        background: linear-gradient(to right, #200122, #6f0000); 
+    } */
+
+    @keyframes showMessage {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+<body>
+    <main class="main-container">
+        <audio class="iphoneNotification">
+            <source src="./iphoneNotificationSound.mp3">
+        </audio>
+        <div class="chat-interface">
+            <header class="top-section">
+                <figure>
+                    <img src="./restaurantImage.jfif" class="restaurantImage" />
+                </figure>
+                <div class="text">
+                    <p class="restaurant-name">Ronald's Restaurant Chatbot</p>
+                    <div class="online-status">online</div>
+                </div>
+            </header>
+            <div class="message-container">
+            </div>
+            <form class="chatbot-form">
+                <div class="quick-options-container">
+                    <div class="quick-options">
+                        <div>Place Order</div>
+                        <div>Cancel Order</div>
+                        <div>View Order</div>
+                        <div>Checkout Order</div>
+                        <div>Order History</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input class="chat-input" placeholder="Type in a command..."/> 
+                    <button class="sendButton">
+                        Send
+                        <img class="sendImage" src="./sendIcon.png" />
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        // Select Elements from the DOM
+        const chatbox_form = document.querySelector("form")
+        const chat_input = document.querySelector(".chat-input");
+        const message_container = document.querySelector(".message-container");
+        const iphoneNotification = document.querySelector(".iphoneNotification")
+        const iphoneNotificationSound = new Audio("./iphoneNotificationSound.mp3");
+        const sendButton = document.querySelector(".sendButton");
+        const place_order_button = document.querySelector(".quick-options div:nth-of-type(1)")
+        const cancel_order_button = document.querySelector(".quick-options div:nth-of-type(2)")
+        const view_order_button = document.querySelector(".quick-options div:nth-of-type(3)")
+        const checkout_order_button = document.querySelector(".quick-options div:nth-of-type(4)")
+        const order_history_button = document.querySelector(".quick-options div:nth-of-type(5)")
+
+        
+        const createUserMessage = () => {
+            const newUserMessage = document.createElement("div");
+            newUserMessage.className = "message user";
+            newUserMessage.innerHTML = chat_input.value.trim();
+            message_container.append(newUserMessage);
+            message_container.scrollTop = 1000000;
+        }
+        
+        const createChatboxMessage = (value) => {
+            const newChatboxMessage = document.createElement("p");
+            newChatboxMessage.className = "message chatbot";
+            newChatboxMessage.innerHTML = value;
+            setTimeout(() => {
+                message_container.append(newChatboxMessage);
+                iphoneNotificationSound.play();
+                message_container.scrollTop += 1000000;
+                message_container.scrollTop(100000000000);
+            }, 500)
+        }
+
+
+        place_order_button.addEventListener('click', () => {
+            chat_input.value = "1";
+            sendButton.click();
+        })
+        cancel_order_button.addEventListener('click', () => {
+            chat_input.value = "0";
+            sendButton.click();
+        })
+        view_order_button.addEventListener('click', () => {
+            chat_input.value = "97";
+            sendButton.click();
+        })
+        checkout_order_button.addEventListener('click', () => {
+            chat_input.value = "99";
+            sendButton.click();
+        })
+        order_history_button.addEventListener('click', () => {
+            chat_input.value = "98";
+            sendButton.click();
+        })
+        console.log(chatbox_form)
+        chatbox_form.addEventListener( 'submit', function(e) {
+            e.preventDefault();
+
+            if (chat_input.value) {
+                
+                createUserMessage();
+                if (!["1","99","98", "97", "0", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" ].includes(chat_input.value)){
+                    createChatboxMessage("This Input is Invalid.");
+                    createChatboxMessage(`These are the possible commands:
+                    0- Cancel Order
+                    1- Place an Order
+                    97- View Current Order
+                    98- See Order History
+                    99- Checkout your Current Order`)
+                }
+                console.log(chat_input.value)
+                if (chat_input.value == "1") {
+                    console.log("Chat value was 1")
+                    socket.emit("place_order")
+                }
+                else if (["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"].includes(chat_input.value)) {
+                    socket.emit("add_item_to_order", chat_input.value);
+                }
+                else if (chat_input.value == "97") {
+                    socket.emit("view_order");
+                }
+                else if (chat_input.value == "98") {
+                    socket.emit("view_order_history")
+                }
+                else if (chat_input.value == "99") {
+                    socket.emit("checkout_order");
+                }
+                else if (chat_input.value == "0") {
+                    socket.emit("cancel_order");
+                }
+                chat_input.value = "";
+
+                
+            }
+        }) 
+        
+        window.addEventListener('load', (e) => {
+             createChatboxMessage("Welcome to Ronald's Restaurant!")
+             setTimeout(() =>createChatboxMessage(`These are the possible commands: <br />
+                0 - Cancel Order <br />
+                1 - Place an Order <br />
+                97 - See Current Order <br />
+                98 - See Order History <br />
+                99 - Checkout an Order <br />`), 500);
+            // socket.on("show_options", (message) => createChatboxMessage(message))
+            socket.on("order_placed", (message) => {if (message) createChatboxMessage(message)})
+            socket.on("item_added_to_order", (message) => createChatboxMessage(message));
+            socket.on("order_viewed", (message) => createChatboxMessage(message));
+            socket.on("order_canceled", (message) => createChatboxMessage(message))
+            socket.on("order_checked_out", (message) => createChatboxMessage(message));
+            socket.on("order_history_viewed", (message) => createChatboxMessage(message));
+        })
+
+
+    </script>
+</body>
+</html>
